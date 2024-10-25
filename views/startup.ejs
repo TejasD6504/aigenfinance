@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investment Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #0ea5e9;
+            --accent-color: #8b5cf6;
+            --success-color: #10b981;
+            --background-color: #f1f5f9;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --gradient-start: #3b82f6;
+            --gradient-end: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--background-color) 0%, #e2e8f0 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            color: white;
+            text-align: center;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .sections-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .form {
+            display: none;
+            margin-top: 2rem;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            background: linear-gradient(to bottom, #ffffff, #f8fafc);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background-color: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .file-upload {
+            border: 2px dashed var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-color);
+            background-color: #f0f9ff;
+        }
+
+        .preview {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkbox-container:hover {
+            background-color: #f0f9ff;
+        }
+
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 1rem;
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+
+        .success-popup {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%) translateY(-50%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .analysis-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--card-background);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Investment Dashboard</h1>
+    </div>
+
+    <div class="container">
+        <div class="sections-container">
+            <div class="section">
+                <h2>Startup Information</h2>
+                <button class="btn" onclick="showForm('startupForm')">Add Startup</button>
+                
+                <form action="/main/startupreg/<%= data[0].id %>" method="post">
+                   
+                        <label for="startupName">Startup Name *</label>
+                        <input type="text" id="startupName" name="startup_name" required>
+               
+
+                 
+                        <label for="yearEstablished">Year Established *</label>
+                        <input type="number" id="yearEstablished" min="1900" max="2024" name="year" required>
+                   
+
+                    
+                        <label for="sector">Startup Sector *</label>
+                        <select id="sector" name="sec" required>
+                            <option value="">Select a sector</option>
+                            <option value="Technology">Technology</option>
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Education">Education</option>
+                            <option value="E-commerce">E-commerce</option>
+                            <option value="Manufacturing">Manufacturing</option>
+                            <option value="Agriculture">Agriculture</option>
+                            <option value="Energy">Energy</option>
+                        </select>
+                 
+
+                    
+                        <label for="website">Startup Website *</label>
+                        <input type="url" id="website" name="web" required>
+                   
+
+                    
+                        <label>Balance Sheet * (PDF/Excel)</label>
+                   
+                            <input type="file" id="balanceSheet" accept=".pdf,.xls,.xlsx" name="exc" required>
+                 
+                        <label>Additional Documents</label>
+                     
+                            <input type="file" id="additionalDocs" accept=".pdf,.doc,.docx,.xls,.xlsx" name="add" multiple>
+                    
+                    
+
+                    <button type="submit" class="btn">Submit Startup</button>
+                </form>
+
+                <div id="startupPreview" class="preview"></div>
+            </div>
+
+            <div class="section">
+                <h2>Investor Information</h2>
+                <h1> Name : <%= data[0].Name_of_investor %></h1>
+                <h3>Email : <%= data[0].email_of_investor %></h3>
+                <h3>Phone : <%= data[0].phone_of_investor %></h3>
+                <h3> Capacity :<%= data[0].investmentCapacity %></h3>
+                <h3> Sectors : <%= data[0].sectors%></h3>
+                <h3>investmentHorizon : <%= data[0].investmentHorizon%></h3>
+            </div>
+        </div>
+
+        <div class="analysis-section" id="analysisSection" style="display: none;">
+            <h2>Select Items for Analysis</h2>
+            <div id="analysisCheckboxes"></div>
+            <button class="btn" onclick="startAnalysis()">Start Analysis</button>
+        </div>
+    </div>
+
+    <div class="success-popup" id="successPopup"></div>
+
+    <script>
+        let startups = [];
+        let investors = [];
+
+        function showForm(formId) {
+            document.getElementById(formId).style.display = 'block';
+        }
+
+        document.getElementById('startupForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const startup = {
+                name: document.getElementById('startupName').value,
+                year: document.getElementById('yearEstablished').value,
+                sector: document.getElementById('sector').value,
+                website: document.getElementById('website').value,
+                balanceSheet: document.getElementById('balanceSheet').files[0]?.name || 'No file uploaded',
+                additionalDocs: Array.from(document.getElementById('additionalDocs').files).map(file => file.name)
+            };
+
+            startups.push(startup);
+            showSuccessPopup('Startup added successfully!');
+            updatePreview('startup');
+            updateAnalysisSection();
+            this.reset();
+        });
+
+        document.getElementById('investorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const investor = {
+                name: document.getElementById('investorName').value,
+                type: document.getElementById('investorType').value,
+                range: document.getElementById('investmentRange').value,
+                sectors: Array.from(document.getElementById('preferredSectors').selectedOptions).map(option => option.value),
+                profile: document.getElementById('investorProfile').files[0]?.name || 'No file uploaded'
+            };
+
+            investors.push(investor);
+            showSuccessPopup('Investor added successfully!');
+            updatePreview('investor');
+            updateAnalysisSection();
+            this.reset();
+        });
+
+        function updatePreview(type) {
+            const items = type === 'startup' ? startups : investors;
+            const preview = document.getElementById(`${type}Preview`);
+            preview.style.display = 'block';
+            preview.innerHTML = '';
+
+            items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                if (type === 'startup') {
+                    card.innerHTML = `
+                        <h3>${item.name}</h3>
+                        <p><strong>Year Established:</strong> ${item.year}</p>
+                        <p><strong>Sector:</strong> ${item.sector}</p>
+                        <p><strong>Website:</strong> <a href="${item.website}" target="_blank">${item.website}</a></p>
+                        <p><strong>Balance Sheet:</strong> ${item.balanceSheet}</p>
+                        <p><strong>Additional Documents:</strong> ${item.additionalDocs.join(', ') || 'None'}</p>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        <h3>${item.name}</h3>
+                        <p><strong>Type:</strong> ${item.type}</p>
+                        <p><strong>Investment Range:</strong> ${item.range}</p>
+                        <p><strong>Preferred Sectors:</strong> ${item.sectors.join(', ') || 'None specified'}</p>
+                        <p><strong>Investment Profile:</strong> ${item.profile}</p>
+                    `;
+                }
+                preview.appendChild(card);
+            });
+        }
+
+        function updateAnalysisSection() {
+            const analysisSection = document.getElementById('analysisSection');
+            const checkboxesContainer = document.getElementById('analysisCheckboxes');
+            
+            if (startups.length > 0 || investors.length > 0) {
+                analysisSection.style.display = 'block';
+                
+                let checkboxesHTML = '';
+                
+                if (startups.length > 0) {
+                    checkboxesHTML += '<h3 class="mb-3">Startups</h3>';
+                    startups.forEach((startup, index) => {
+                        checkboxesHTML += `
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="startup${index}" value="startup_${index}">
+                                <label for="startup${index}">${startup.name}</label>
+                            </div>
+                        `;
+                    });
+                }
+                
+                if (investors.length > 0) {
+                    checkboxesHTML += '<h3 class="mb-3">Investors</h3>';
+                    investors.forEach((investor, index) => {
+                        checkboxesHTML += `
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="investor${index}" value="investor_${index}">
+                                <label for="investor${index}">${investor.name}</label>
+                            </div>
+                        `;
+                    });
+                }
+                
+                checkboxesContainer.innerHTML = checkboxesHTML;
+            }
+        }
+
+        function startAnalysis() {
+            const selectedItems = Array.from(document.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(checkbox => {
+                    const [type, index] = checkbox.value.split('_');
+                    return {
+                        type,
+                        item: type === 'startup' ? startups[index] : investors[index]
+                    };
+                });
+            
+            if (selectedItems.length === 0) {
+                showSuccessPopup('Please select at least one item for analysis');
+                return;
+            }
+
+            // Count selected items by type
+            const counts = selectedItems.reduce((acc, {type}) => {
+                acc[type] = (acc[type] || 0) + 1;
+                return acc;
+            }, {});
+
+            showSuccessPopup(`Analysis started for ${counts.startup || 0} startups and ${counts.investor || 0} investors!`);
+        }
+
+        function showSuccessPopup(message) {
+            const popup = document.getElementById('successPopup');
+            popup.textContent = message;
+            popup.style.display = 'block';
+            
+            // Add slide-in animation class
+            popup.style.animation = 'none';
+            popup.offsetHeight; // Trigger reflow
+            popup.style.animation = 'slideIn 0.3s ease-out';
+            
+            setTimeout(() => {
+                // Add slide-out animation
+                popup.style.animation = 'slideIn 0.3s ease-out reverse';
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                }, 300);
+            }, 3000);
+        }
+
+        // File upload handlers
+        ['balanceSheet', 'additionalDocs', 'investorProfile'].forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.addEventListener('change', function(e) {
+                    if (this.files.length > 0) {
+                        const fileCount = this.files.length;
+                        const fileText = fileCount === 1 ? 'file' : 'files';
+                        showSuccessPopup(`${fileCount} ${fileText} uploaded successfully!`);
+                    }
+                });
+            }
+        });
+
+        // Add drag and drop functionality to file upload areas
+        document.querySelectorAll('.file-upload').forEach(uploadArea => {
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color');
+                uploadArea.style.backgroundColor = '#f0f9ff';
+            });
+
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                uploadArea.style.backgroundColor = '#f8fafc';
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border-color');
+                uploadArea.style.backgroundColor = '#f8fafc';
+                
+                const input = uploadArea.querySelector('input[type="file"]');
+                if (input) {
+                    input.files = e.dataTransfer.files;
+                    input.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+    </script>
+</body>
+</html>

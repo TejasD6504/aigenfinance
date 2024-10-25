@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Investor Registration - InvestMatch</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        nav {
+            padding: 1rem;
+            background: #f0f0f0;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .progress-bar {
+            background: #eee;
+            height: 10px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        #progress {
+            background: #4CAF50;
+            height: 100%;
+            width: 0;
+            border-radius: 5px;
+            transition: width 0.3s;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        .error {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">InvestMatch</a>
+    </nav>
+
+    
+        <h1>Investor Registration</h1>
+        <p>Join our community of strategic investors</p>
+
+        <div class="progress-bar">
+            <div id="progress"></div>
+        </div>
+
+        <!-- Section 1: Basic Information -->
+         <form action="/main/new" method="post">
+        <section id="section1">
+            <h2>Basic Information</h2>
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" required>
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" required>
+        </section>
+
+        <!-- Section 2: Investment Profile -->
+        <section id="section2" class="hidden">
+            <h2>Investment Profile</h2>
+            <label for="investmentCapacity">Investment Capacity (USD)</label>
+            <select id="investmentCapacity" name="investmentCapacity" required>
+                <option value="">Select range</option>
+                <option value="10k-50k">$10,000 - $50,000</option>
+                <option value="50k-200k">$50,000 - $200,000</option>
+                <option value="200k-1m">$200,000 - $1,000,000</option>
+                <option value="1m+">$1,000,000+</option>
+            </select>
+
+            <label for="sectors">Preferred Sectors</label>
+            <select id="sectors" name="sectors" multiple required>
+                <option value="tech">Technology</option>
+                <option value="health">Healthcare</option>
+                <option value="finance">Finance</option>
+                <option value="retail">Retail</option>
+                <option value="energy">Energy</option>
+                <option value="education">Education</option>
+            </select>
+        </section>
+
+        <!-- Section 3: Investment Preferences -->
+        <section id="section3" class="hidden">
+            <h2>Investment Preferences</h2>
+            <label for="investmentStyle">Investment Style</label>
+            <select id="investmentStyle" name="investmentStyle" required>
+                <option value="">Select style</option>
+                <option value="value">Value Investing</option>
+                <option value="growth">Growth Investing</option>
+                <option value="balanced">Balanced Approach</option>
+            </select>
+
+            <label for="investmentHorizon">Investment Horizon</label>
+            <select id="investmentHorizon" name="investmentHorizon" required>
+                <option value="">Select timeframe</option>
+                <option value="short">Short term (&lt; 1 year)</option>
+                <option value="medium">Medium term (1-3 years)</option>
+                <option value="long">Long term (3+ years)</option>
+            </select>
+        </section>
+
+        <div>
+            <button type="button" id="prevBtn" class="hidden">Previous</button>
+            <button type="button" id="nextBtn">Next</button>
+            <button type="submit" id="submitBtn" class="hidden">Complete Registration</button>
+        </div>
+    </form>
+
+    <script>
+        let currentSection = 1;
+        const totalSections = 3;
+
+        function updateProgress() {
+            const progress = document.getElementById('progress');
+            progress.style.width = `${(currentSection / totalSections) * 100}%`;
+        }
+
+        function showSection(sectionNumber) {
+            // Hide all sections
+            for (let i = 1; i <= totalSections; i++) {
+                document.getElementById(`section${i}`).classList.add('hidden');
+            }
+            
+            // Show current section
+            document.getElementById(`section${sectionNumber}`).classList.remove('hidden');
+            
+            // Update buttons
+            document.getElementById('prevBtn').classList.toggle('hidden', sectionNumber === 1);
+            document.getElementById('nextBtn').classList.toggle('hidden', sectionNumber === totalSections);
+            document.getElementById('submitBtn').classList.toggle('hidden', sectionNumber !== totalSections);
+            
+            updateProgress();
+        }
+
+        function validateSection(sectionNumber) {
+            const section = document.getElementById(`section${sectionNumber}`);
+            const inputs = section.querySelectorAll('input[required], select[required]');
+            let valid = true;
+
+            inputs.forEach(input => {
+                const errorElement = input.nextElementSibling;
+                if (!input.value) {
+                    valid = false;
+                    input.style.borderColor = 'red';
+                    
+                    if (!errorElement || !errorElement.classList.contains('error')) {
+                        const error = document.createElement('div');
+                        error.className = 'error';
+                        error.textContent = 'This field is required';
+                        input.parentNode.insertBefore(error, input.nextSibling);
+                    }
+                } else {
+                    input.style.borderColor = '#ddd';
+                    if (errorElement && errorElement.classList.contains('error')) {
+                        errorElement.remove();
+                    }
+                }
+            });
+
+            return valid;
+        }
+
+        document.getElementById('nextBtn').addEventListener('click', () => {
+            if (validateSection(currentSection)) {
+                currentSection++;
+                showSection(currentSection);
+            }
+        });
+
+        document.getElementById('prevBtn').addEventListener('click', () => {
+            currentSection--;
+            showSection(currentSection);
+        });
+
+        document.getElementById('investorForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (validateSection(currentSection)) {
+                const formData = new FormData(e.target);
+                try {
+                    const response = await fetch('/main/new', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        alert('Registration successful!');
+                        window.location.href = '/dashboard'; // Redirect to dashboard
+                    } else {
+                        throw new Error('Registration failed');
+                    }
+                } catch (error) {
+                    alert('Error submitting form: ' + error.message);
+                }
+            }
+        });
+
+        // Initialize first section
+        showSection(1);
+    </script>
+</body>
+</html>
