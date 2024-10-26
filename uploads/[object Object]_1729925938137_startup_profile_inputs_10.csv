@@ -1,0 +1,11 @@
+Startup Name,Sector,Stage,Revenue Model,Company Size,Financial Health,Profitability,Revenue Growth,Cash Flow,Risk Level,Geographic Location,Investment Ask,Use of Funds
+TechStart,Technology,Mid-stage,Subscription-based (SaaS),Medium (50-500 employees),Stable,Profitable,30% year-over-year,Positive,Moderate,Domestic,"$1,000,000","Product development, marketing"
+EcoRenew,Renewable Energy,Early-stage,Product-based,Small (1-50 employees),Growing,Not yet profitable,50% year-over-year,Negative,High,Global,"$500,000","R&D, operations"
+HealthX,Healthcare,Late-stage,Ad-based,Large (500+ employees),Stable,Profitable,20% year-over-year,Positive,Low,Domestic,"$5,000,000","Expansion, marketing"
+FinHub,Fintech,Mid-stage,Transaction-based,Medium (50-500 employees),Growing,Not yet profitable,35% year-over-year,Positive,Moderate,Global,"$2,000,000","Technology upgrades, hiring"
+AgriTech,Agriculture,Early-stage,Product-based,Small (1-50 employees),Unstable,Not yet profitable,10% year-over-year,Negative,High,Domestic,"$250,000","Product development, marketing"
+EduPlus,Education,Mid-stage,Subscription-based,Medium (50-500 employees),Stable,Profitable,25% year-over-year,Positive,Low,Domestic,"$1,500,000","Technology upgrades, expansion"
+GreenEnergy,Energy,Late-stage,Product-based,Large (500+ employees),Stable,Profitable,15% year-over-year,Positive,Low,Global,"$4,000,000","R&D, marketing"
+BioLife,Biotechnology,Mid-stage,Licensing-based,Medium (50-500 employees),Growing,Not yet profitable,40% year-over-year,Positive,Moderate,Domestic,"$3,000,000","Expansion, R&D"
+SafeHome,Home Security,Early-stage,Subscription-based,Small (1-50 employees),Unstable,Not yet profitable,5% year-over-year,Negative,High,Domestic,"$750,000","Technology development, marketing"
+AutoDrive,Automotive,Late-stage,Product-based,Large (500+ employees),Stable,Profitable,10% year-over-year,Positive,Low,Global,"$6,000,000","Expansion, R&D"

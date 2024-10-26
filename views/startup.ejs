@@ -237,7 +237,7 @@
                 <h2>Startup Information</h2>
                 <button class="btn" onclick="showForm('startupForm')">Add Startup</button>
                 
-                <form action="/main/startupreg/<%= data[0].id %>" method="post">
+                <form action="/main/startupreg/<%= data[0].id %>" method="post" enctype="multipart/form-data">
                    
                         <label for="startupName">Startup Name *</label>
                         <input type="text" id="startupName" name="startup_name" required>
@@ -265,13 +265,7 @@
 
                     
                         <label for="website">Startup Website *</label>
-                        <input type="url" id="website" name="web" required>
-                   
-
-                    
-                        <label>Balance Sheet * (PDF/Excel)</label>
-                   
-                            <input type="file" id="balanceSheet" accept=".pdf,.xls,.xlsx" name="exc" required>
+                        <input type="url" id="website" name="web" required> 
                  
                         <label>Additional Documents</label>
                      
@@ -281,6 +275,14 @@
 
                     <button type="submit" class="btn">Submit Startup</button>
                 </form>
+
+                <form action="/upload/<%= data[0].id %>" method="post" enctype="multipart/form-data">
+                    <label>Balance Sheet * (PDF/Excel)</label>
+                    <input type="file" id="balanceSheet" accept=".pdf,.xls,.xlsx,.csv" name="exc" required>
+                    <button type="submit">upload</button>
+
+                </form>
+                
 
                 <div id="startupPreview" class="preview"></div>
             </div>
