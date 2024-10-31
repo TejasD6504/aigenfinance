@@ -15,7 +15,7 @@ const {
 const xlsx = require('xlsx');
 const { json } = require("body-parser");
 
-const apiKey = "AIzaSyDTeERX4PImQvRq0x-x8-EUlTg7cyNyHRg";
+const apiKey = ""; // For safety purpose api key is hidden;
 const genAI = new GoogleGenerativeAI(apiKey);
 
 
