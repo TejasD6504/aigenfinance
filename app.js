@@ -3,6 +3,7 @@ const app = express();
 const mysql = require("mysql");
 const path = require("path");
 const multer = require("multer");
+let applytext = ' ';
 
 
 const {
@@ -12,6 +13,7 @@ const {
 } = require("@google/generative-ai");
 
 const xlsx = require('xlsx');
+const { json } = require("body-parser");
 
 const apiKey = "AIzaSyDTeERX4PImQvRq0x-x8-EUlTg7cyNyHRg";
 const genAI = new GoogleGenerativeAI(apiKey);
@@ -147,7 +149,7 @@ app.post("/main/new",(req, res) => {
 
       app.post("/upload/:id",upload.single("exc"),(req,res) => {
         const balanceSheetPath = req.file.path; // Get the path of the uploaded file
-          let {id} = req.body.id;
+          let {id} = req.params;
       
      
         // Insert path to MySQL\
@@ -172,63 +174,130 @@ app.post("/main/new",(req, res) => {
         }
       })
 
-      app.get('/main/analyses', async (req, res) => {
-        function readExcelFile(filePath) {
-          const workbook = xlsx.readFile(filePath);
-          const sheetName = workbook.SheetNames[0];
-          const worksheet = workbook.Sheets[sheetName];
-          return xlsx.utils.sheet_to_json(worksheet);
-        }
-      
-        async function run() {
-          try {
-            connection.query("SELECT * FROM investorpath", async (err1, result1) => {
-              if (err1) {
-                console.error("Database query error:", err1);
-                return res.status(500).json({ error: "Database query error." });
-              }
-      
-              let finalText = ""; // Initialize finalText before using it
-      
-              for (let i = 0; i < result1.length; i++) {
-                const filePath = `C:\\Users\\omen playground\\Desktop\\mumbai hacks\\uploads\\${result1[i].balance_sheet_path}`;
-                const jsonData = readExcelFile(filePath);
-                const jsonText = JSON.stringify(jsonData, null, 2);
-      
-                // Concatenate the JSON text
-                finalText += jsonText; 
-              }
-      
-              // Start the chat session and provide the JSON content as context
-              const chatSession = model.startChat({
-                generationConfig,
-                history: [
-                  {
-                    role: 'user',
-                    parts: [
-                      { text: `Here is some startup data in JSON format:\n\n${finalText}` },
-                    ],
-                  },
-                ],
-              });
-      
-              const result = await chatSession.sendMessage("Please analyze the data provided. You have 1 or 2 companies which will give you their numerical value. Please advise the investor which company he should invest in and why.");
-              
-              // Log the response
-              console.log(result.response.text); // Access the text directly
-      
-              // Render the response using EJS
-              res.render("analyses.ejs", { data: result.response.text }); 
-            });
-          } catch (err) {
-            console.error("Error:", err);
-            res.status(500).json({ error: "An unexpected error occurred." });
-          }
-        }
-      
-        run();
-      });
-      
+// Route for initial analysis
+app.get('/main/analyses', async (req, res) => {
+  function readExcelFile(filePath) {
+    const workbook = xlsx.readFile(filePath);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+    return xlsx.utils.sheet_to_json(worksheet);
+  }
+
+  
+
+  async function run() {
+    const question = req.query.question;
+    console.log(question);
+  
+    applytext = applytext + '.' + question;
+
+    console.log(`User : ${applytext}`);
+
+    // try {
+    //   connection.query("SELECT * FROM investorpath", async (err1, result1) => {
+    //     if (err1) {
+    //       console.error("Database query error:", err1);
+    //       return res.status(500).json({ error: "Database query error." });
+    //     }
+
+        let finalText = ""; // Initialize finalText before using it
+
+        const filePath = `C:\\Users\\omen playground\\Desktop\\mumbai hacks\\uploads\\startup_data_sample1.xlsx`;
+        const jsonData = readExcelFile(filePath);
+        const jsonText = JSON.stringify(jsonData, null, 2);
+  
+        // console.log(jsonText);
+       
+
+        // Start the chat session and provide the JSON content as context
+        const chatSession = model.startChat({
+          generationConfig,
+          history: [
+            {
+              role: 'user',
+              parts: [
+                { text: `Here is some startup data in JSON format:\n\n${jsonText}` },
+              ],
+            },
+          ],
+        });
+
+        const result = await chatSession.sendMessage(`You are Synthify, a finance assistant chatbot with access to 1 or 2 companies numerical values. Please advise the investor on which company to invest in and why. ${applytext}`);
+
+        // Log the response
+        // console.log(result.response.text()); // Access the text directly
+
+        // Render the response using EJS
+
+        // Exporting data
+        const myData = result.response.text() ;
+
+        module.exports = myData;
+
+
+        res.json({data : result.response.text()}); 
+      }
+      run();
+    });
+
+    // } catch (err) {
+    //   console.error("Error:", err);
+    //   res.status(500).json({ error: "An unexpected error occurred." });
+    // }
+  // }
+
+ 
+// }
+// );
+
+// New route to ask a follow-up question
+// app.get('/main/ask', async (req, res) => {
+//   const question = req.query.question;
+//   applytext = applytext + ' ' + question;
+
+//   console.log(applytext);
+
+//   try {
+//     // Start or continue chat session with context
+//     const chatSession = model.startChat({
+//       generationConfig,
+//       history: [
+//         // Initial analysis context
+//         {
+//           role: 'user',
+//           parts: [{ text: `Here is some startup data in JSON format:\n\n${applytext}` }],
+//         },
+//         // Initial response
+//         {
+//           role: 'assistant',
+//           parts: [{ text: `As Synthify, I have access to the financial data... (initial analysis text here)` }],
+//         },
+//         // Append new question
+//         {
+//           role: 'user',
+//           parts: [{ text: applytext }],
+//         },
+//       ],
+//     });
+
+//     const result = await chatSession.sendMessage(applytext);
+
+//     // Accessing the response text directly
+//     const responseText = result.response; // Assuming `result.response` contains the full text response
+
+//     // console.log(result.response.text());
+//     console.log("Bot Response:", responseText);
+
+//     // Return the response to the client
+//     res.json({ data: responseText });
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).json({ error: "An error occurred while fetching the response." });
+//   }
+// });
+
+
+
      
 
     
